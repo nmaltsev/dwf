@@ -1,0 +1,23 @@
+$vendorList: "-webkit-", "-moz-", "" 
+
+=propertyFix($property, $params...)
+	@each $prefix in $vendorList
+		#{$prefix}#{$property}: $params
+
+=valueFix($property, $params...)
+	@each $prefix in $vendorList
+		#{$property}: #{$prefix}$params
+
+=text($fontSize, $lineHeight, $color:"")
+	font-size: #{$fontSize}px
+	line-height: #{$lineHeight}px
+	@if $color
+		color: #{$color}
+
+=borderBox()
+	+propertyFix("box-sizing", border-box)
+
+=absPos($x, $y)
+	position: absolute
+	left: #{$x}px
+	top: #{$y}px
