@@ -1,5 +1,5 @@
 <?php
-class Index extends AController{
+class Index extends \Core\AController{
 
 	function __construct(){}
 
@@ -15,9 +15,8 @@ class Index extends AController{
 	}
 
 	function a_widgets($conf) {
-		Log::logger()->send('test123');
+		\Core\Utils\Log::logger()->send('test123');
 		// Demo page with widgets
 		return $this->view('widgets');
 	}
 }
-?>

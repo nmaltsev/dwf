@@ -1,16 +1,16 @@
 <?php
-class Auth extends AController{
+class Auth extends \Core\AController {
 	
 	function __construct(){}
 	function a_login(){
 		// POST {user: ..., password: ...}
-		return new JsonAction(array());
+		return new \Core\JsonAction(array());
 	}
 	function a_logout(){
-		return new JsonAction([]);
+		return new \Core\JsonAction([]);
 	}
 	function a_whoami(){
-		return new JsonAction([
+		return new \Core\JsonAction([
 			'whoami' => [
 				'user'=> 'nick'
 			]
@@ -35,15 +35,16 @@ class Auth extends AController{
 			array_push($list, rand(1, 1000));
 		}
 
-		return new JsonAction($list);
+		return new \Core\JsonAction($list);
 	}
+
 	function a_threat_info($conf){
 		$id = $conf['id'];
 		$object = $this->getRandomItem($this->testData['report_object']);
 		$size = rand(100, 4096);
 		$heuristic = $this->getRandomBool();
 
-		return new JsonAction([
+		return new \Core\JsonAction([
 			'threat_id' =>  $id,
 			'detection_time' => time(),
 			'report' =>  [

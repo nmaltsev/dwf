@@ -1,6 +1,6 @@
 <?php
 
-class Test extends AWidget{
+class Test extends \Core\Utils\AWidget{
 	const style = '';
 	const script = '';
 	

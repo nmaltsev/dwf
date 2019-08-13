@@ -1,5 +1,5 @@
 <?php
-class Test1 extends AController{
+class Test1 extends \Core\AController{
 
     function __construct(){}
 

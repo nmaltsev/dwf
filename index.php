@@ -25,7 +25,6 @@ include(APP_PATH . 'core.php');
 // something which should probably be served as a static file
 if (PHP_SAPI == 'cli-server') {
     $url  = parse_url($_SERVER['REQUEST_URI']);
-    // echo FRAMEWORK_ROOT . "-" . $url['path'];
     $file = __DIR__ . $url['path'];
     
     if (is_file($file)) {
@@ -34,6 +33,6 @@ if (PHP_SAPI == 'cli-server') {
 } 
 
 // The application launch
-$conf = System::init();
-$project = new App($conf);
+$conf = \Core\System::init();
+$project = new \Core\App($conf);
 $project->execute();

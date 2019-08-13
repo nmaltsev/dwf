@@ -1,5 +1,8 @@
 <?php
 
+namespace Core\Utils;
+
+
 // 	Class for working with data stored in the PHP source file
 class SourceStore {
 	

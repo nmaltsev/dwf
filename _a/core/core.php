@@ -1,4 +1,5 @@
 <?php
+namespace Core;
 
 function __autoload($filename) {
 	if (file_exists($filename) == false){
@@ -17,17 +18,14 @@ abstract class System {
 		'widgets.class.php'
 	];
 
-	// TODO move in config file!
-	const LogDebug = 'debug';
-
     function init() {
 		foreach(System::InitScripts as $script) {
 			include(APP_PATH . $script);
 		}
-		$appConfig = SourceStore::restore(DOMAIN_PATH.'config.php');
+		$appConfig = Utils\SourceStore::restore(DOMAIN_PATH.'config.php');
 		
 		if (isset($appConfig['default_log_file'])) {
-			Log::$defaultLogFilePath = $appConfig['default_log_file'];
+			Utils\Log::$defaultLogFilePath = $appConfig['default_log_file'];
 		}
 		
 		return $appConfig;
@@ -50,7 +48,7 @@ class App {
 		$routerQueryArray = explode('?', $query);
 		
 		// Creation an instance of the router 
-		$router = new Router(DOMAIN_PATH . 'routing.php', !$this->isProd);
+		$router = new Utils\Router(DOMAIN_PATH . 'routing.php', !$this->isProd);
 		self::$path = $routerQueryArray[0];
 		// Parsing the request path
 		$this->rout_data = $router->get(self::$path);
@@ -80,23 +78,23 @@ class App {
 					$actionResult->execute();	
 				} else {
 					// $controllerArray["values"] will store the controller properties
-					Log::write(
+					Utils\Log::write(
 						'Trouble: ' . date('Y/m/d H:i:s') . 
 						' controller-name: ' . $controllerArray['controller'] . 
 						' action-name: ' . $controllerArray['action']
 					);
-					Log::write('Trouble action does not implements IAction result');
+					Utils\Log::write('Trouble action does not implements IAction result');
 				}
 			} else {
-				Log::write('Action not found: ' . $controllerClassName . '::' . $actionName);
-				throw new Exception('action not exist');
+				Utils\Log::write('Action not found: ' . $controllerClassName . '::' . $actionName);
+				throw new \Exception('action not exist');
 			}
 		} else {
 			$errMessage = 'File "' . $classPath . 
 			'" not found or class "' . $controllerArray['controller'] . 
 			'" does not exist';
-			Log::write($errMessage);
-			throw new Exception($errMessage);
+			Utils\Log::write($errMessage);
+			throw new \Exception($errMessage);
 		}
 	}
 }
@@ -159,7 +157,7 @@ class ViewAction implements IActionResult{
 	// <controllers folder>/{Controller name}/view/{view name}.view.php
 	function execute(){
 		$viewPath = CONTROLLER_PATH . $this->controllerName . DS . 'view' . DS . $this->viewName . '.view.php';
-		$tempObj = new LayoutRender(FRAMEWORK_ROOT . '_masterpage' . DS);
+		$tempObj = new Utils\LayoutRender(FRAMEWORK_ROOT . '_masterpage' . DS);
 		
 		if (is_array($this->optArray)) {
 			foreach($this->optArray as $key => $value) {

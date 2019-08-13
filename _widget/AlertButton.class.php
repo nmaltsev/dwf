@@ -1,6 +1,6 @@
 <?php
 
-class AlertButton extends AWidget {
+class AlertButton extends \Core\Utils\AWidget {
 	
 	const style = '
 .btn_alert {

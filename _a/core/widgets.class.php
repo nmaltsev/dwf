@@ -1,6 +1,8 @@
 <?php
 
-abstract class AWidget implements ArrayAccess{
+namespace Core\Utils;
+
+abstract class AWidget implements \ArrayAccess {
 
 	// Collection of widget properties
 	private $stack = array();
@@ -76,7 +78,7 @@ class Widgets {
 
 		if (
 			class_exists($widgetName) ||
-			(__autoload($widget_path) && class_exists($widgetName))
+			(\Core\__autoload($widget_path) && class_exists($widgetName))
 		) {
 			$instance = new $widgetName();
 			

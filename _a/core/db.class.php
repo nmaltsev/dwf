@@ -1,4 +1,7 @@
 <?php
+
+namespace Core\Utils;
+
 defined('FRAMEWORK_ROOT') or die('execute script out of the scope!');
 include(DOMAIN_PATH . 'dbconnection.php');
 
@@ -19,15 +22,15 @@ class DBC implements ADBConnection {
 	// print_r($preQuery->fetch());
 
 		try {
-			self::$pdo = new PDO(
+			self::$pdo = new \PDO(
 				// class properties:
 				constant('DBC::connectionString'), 
 				constant('DBC::login'), 
 				constant('DBC::password'),
-				array(PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')
+				array(\PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES \'UTF8\'')
 			);
 			return true;
-		} catch (PDOException $e) {  
+		} catch (\PDOException $e) {  
 		    // TODO: make format display in log
 			return false;
 		}
@@ -46,8 +49,8 @@ abstract class AModel {
 			echo 'trouble with connection\n';
 			return;
 		} 
-		include(FRAMEWORK_ROOT . SystemFolders::App . DS . 'notorm/NotORM.php');
-		$this->db = new NotORM(DBC::$pdo);
+		include(FRAMEWORK_ROOT . \SystemFolders::App . DS . 'notorm/NotORM.php');
+		$this->db = new \NotORM(DBC::$pdo);
 	}
 }
 

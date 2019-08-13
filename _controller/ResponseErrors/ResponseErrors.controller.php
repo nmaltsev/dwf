@@ -1,5 +1,5 @@
 <?php
-class ResponseErrors extends AController {
+class ResponseErrors extends \Core\AController {
 	
 	private $plugs = [
 		['/\.js$/i', 'text/javascript', ''],
@@ -14,8 +14,8 @@ class ResponseErrors extends AController {
 		// get plugs for a static content
 
 		foreach($this->plugs as $plug) {
-			if(preg_match($plug[0], App::$path)){
-				return new ExtendFormatAction($plug[2], $plug[1]);
+			if(preg_match($plug[0], \Core\App::$path)){
+				return new \Core\ExtendFormatAction($plug[2], $plug[1]);
 			}
 		}
 

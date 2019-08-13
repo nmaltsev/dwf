@@ -1,5 +1,7 @@
 <?php
 
+namespace Core\Utils;
+
 // Router class v8 10.03.2015	
 // Copyright Malcev N. 2014, 2015
 

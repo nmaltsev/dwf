@@ -1,5 +1,8 @@
 <?php
 
+namespace Core\Utils;
+
+
 class Log {
 	
 	static $defaultLogFilePath;

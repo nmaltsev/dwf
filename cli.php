@@ -34,7 +34,7 @@ class CreateController {
 
     private function createControllerClass(): string {
         $template =  '<?php
-class {className} extends AController{
+class {className} extends \Core\AController{
 
     function __construct(){}
 

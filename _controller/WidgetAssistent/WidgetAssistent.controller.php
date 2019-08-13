@@ -1,6 +1,6 @@
 <?php
 
-class WidgetAssistent extends AController {
+class WidgetAssistent extends \Core\AController {
 	private $classes = array();
 	private $widgetDir;
 	
@@ -13,13 +13,13 @@ class WidgetAssistent extends AController {
 	}
 
 	private function collectProperties($mime, $propertyName) {
-		$res = new ExtendFormatAction('', $mime);
+		$res = new \Core\ExtendFormatAction('', $mime);
 		foreach ($this->classes as $widgetName) {
 			$widget_path = $this->widgetDir . $widgetName . '.class.php';
 			
 			if (
 				class_exists($widgetName) ||
-				(__autoload($widget_path) && class_exists($widgetName))
+				(\Core\__autoload($widget_path) && class_exists($widgetName))
 			) {
 				if (defined($widgetName . '::' . $propertyName)) {
 					// It does not work in php 5.2:

@@ -14,14 +14,14 @@ Controllers:
 Action is a public method of the class.
 
 ``` php
-class Error extends AController{
+class Error extends \Core\AController{
 	function __construct(){}
   // When view belongs to the same class
   function a404(){
 		return $this->view('404');
 	}
 	function a403(){
-		return new ViewAction(__CLASS__, 'a404');
+		return new \Core\ViewAction(__CLASS__, 'a404');
 	}
 }
 ```
@@ -29,8 +29,8 @@ class Error extends AController{
 An example of an action method with variables and options for the view:
 ``` php
 // @param {Array} $conf - array with routing options
-function a_index($conf){
-	$viewResult = new ViewAction(__CLASS__, 'index');
+function a_index($conf) {
+	$viewResult = new \Core\ViewAction(__CLASS__, 'index');
 	// $viewResult = $this->view('index');
 
 	// send options in view 

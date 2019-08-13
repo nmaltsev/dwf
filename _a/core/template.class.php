@@ -1,5 +1,7 @@
 <?php
 
+namespace Core\Utils;
+
 abstract class ATemplate {
 	function __construct(){ }
 	
