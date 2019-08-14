@@ -1,0 +1,9 @@
+{
+    "name": "mlc/dwc",
+    "description": "The project template",
+    "type": "project",
+    "config": {
+        
+    },
+    "require": {}
+}

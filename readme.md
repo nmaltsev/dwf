@@ -1,6 +1,6 @@
 # DWF
 
-DWF is a web framework that follows the MVC design pattern.
+DWF is a web framework that follows the MVC design pattern. Required PHP versions range is from 5.3 to 7.3.
 (C) 2013-2015
 
 ## The development guide
@@ -69,13 +69,13 @@ $this->set('title', 'An index page');
 Widgets are blocks of HTML / CSS / JS code that integrates into a page. Widgets are stateless.
 
 
-## Usefull libraries:
+## Useful	 libraries:
 - An ORM library - (NotORM) [https://github.com/vrana/notorm] 
 - Mail library - (PHPMailer)[https://github.com/PHPMailer/PHPMailer]
 - Less compiler - (LessPHP)[https://github.com/leafo/lessphp/]
 
 ## Commands to:
 1. run a web server: `./run.sh`
-2. install dependences: `./install.sh`
+2. install `composer install --no-dev`
 
 

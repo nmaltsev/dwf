@@ -49,7 +49,7 @@ abstract class AModel {
 			echo 'trouble with connection\n';
 			return;
 		} 
-		include(FRAMEWORK_ROOT . \SystemFolders::App . DS . 'notorm/NotORM.php');
+		include(FRAMEWORK_ROOT . \SystemFolders::App . DS . 'vendor/notorm/NotORM.php');
 		$this->db = new \NotORM(DBC::$pdo);
 	}
 }
