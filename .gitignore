@@ -1,7 +1,7 @@
 # Cache and logs
 /_static/log/*
 
-/_a/vendor/*
+/vendor/*
 
 # Composer PHAR
 /composer.phar
