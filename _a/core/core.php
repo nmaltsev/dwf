@@ -18,7 +18,7 @@ abstract class System {
 		'widgets.class.php'
 	];
 
-    function init() {
+    static function init() {
 		foreach(System::InitScripts as $script) {
 			include(APP_PATH . $script);
 		}

@@ -2,8 +2,8 @@
 
 namespace Core\Utils;
 
-// Router class v8 10.03.2015	
-// Copyright Malcev N. 2014, 2015
+// Router class v9 10.08.2025	
+// Copyright Maltsev N. 2014 - 2025
 
 class Router{
 
@@ -27,24 +27,28 @@ class Router{
 	//	@param {String}	$url
 	//	@return {Array}
 	public function get($url) {
-		$segmentCollection = array_filter(explode('/', $url), 'mb_strlen');
+		$segmentCollection = array_filter(explode('/', $url), 'strlen');
 		
 		if (empty($segmentCollection)) {
 			$result = $this->index();
 		} else {
 			$result = $this->get_params($segmentCollection, $this->route);
 		}
+		// echo ' <pre style="background:yellow;">';
+		// print_r($result);
+		// echo '</pre>';
 		return $result;
 	}
 	
 	//	@memberOf Router - get the route data by segment
 	//	@return {Array}
-	private function get_params (& $segmentCollection, $route) {
+	private function get_params(& $segmentCollection, $route) {
 		if (!empty($segmentCollection)) {
 			$segment = array_shift($segmentCollection);
 			
 			if (isset($route['routes'])) {
 				// A segment without variables
+
 				if (isset($route['routes'][$segment])) { 
 					$buf = $route['routes'][$segment];
 					
@@ -52,22 +56,34 @@ class Router{
 						// continue recursion
 						return $this->get_params($segmentCollection, $buf);
 					} else {
+						// echo '<pre style=background:red>---';
+						// print_r($buf);
+						// echo '</pre>';
+						if (!isset($buf['controller'])) {
+							return $this->not_found();
+						}
 						return array(
 							'controller' => $buf['controller'],
 							'action' => $buf['action'],
 						);
 					}
-				} else {
+				} 
+				else {
 					// The check of the route segment by a regular expression:
 					foreach($route['routes'] as $subRoute) {
 						if (isset($subRoute['match'])) {
 							if (preg_match($subRoute['match'], $segment, $temp_values)) {
+								// $temp_values = ['full match', 'first capturing group']
 								$res = null;
 								
 								if (!empty($segmentCollection)) {
 									// continue recursion
 									$res = $this->get_params($segmentCollection, $subRoute);
 								} else {
+									if (!isset($subRoute['controller'])) {
+										// return $this->not_found();
+										continue;
+									}
 									$res = array(
 										'controller' => $subRoute['controller'],
 										'action' => $subRoute['action']
@@ -78,15 +94,19 @@ class Router{
 									$res['vars'] = array();
 								}
 								
-								for ($i = 1; $i < count($temp_values); $i++) {
-									$res['vars'][$subRoute['vars'][$i - 1]] = $temp_values[$i];		
-								}
+								$res['vars'][$subRoute['vars'][0]] = $temp_values[0];
+								// echo "<pre style=background:gray> $segment";
+								// print_r($temp_values);
+								// print_r($subRoute);
+								// print_r($res);
+								// echo '</pre>';
 								
 								return $res;
 							}
 							// continue if not caught by the regular expression
 						} else {
-							return $this->not_found();
+							continue;
+							// return $this->not_found();
 						}
 					}
 					return $this->not_found();
@@ -133,48 +153,49 @@ class Router{
 			$currentTree = &$routTree;
 
 			foreach($segments as $segment) {
+				if (empty($segment)) continue;
+				$routeName = $segment;
 				
-				if (!empty($segment)) {
-					$routeName = $segment;
-					
-					if (strpos($segment, '{') !== false) {	
-						preg_match_all('/\{(.+)(?:\:(w|d))?\}/siuU', $segment, $match_attrs, PREG_SET_ORDER);
-						$match = $segment;
-						$variables = array();
+				if (strpos($segment, '{') !== false) {	
+					preg_match_all('/\{(.+)(?:\:(w|d))?\}/siuU', $segment, $match_attrs, PREG_SET_ORDER);
+					$match = $segment;
+					$variables = array();
 
-						foreach($match_attrs as $key => $variable) {
+					foreach($match_attrs as $key => $variable) {
+						$match = str_replace('{' . $variable[1] . '}', '(.+)', $match);
+						$variables []= $variable[1];
+			
+						if (empty($variable[2])) {
 							$match = str_replace('{' . $variable[1] . '}', '(.+)', $match);
-							$variables []= $variable[1];
-				
-							if (empty($variable[2])) {
-								$match = str_replace('{' . $variable[1] . '}', '(.+)', $match);
+						} else {
+	
+							if ($variable[2] == 'd') {
+								$match = str_replace('{' . $variable[1] . ':d}', '(\d*)', $match);
 							} else {
-		
-								if ($variable[2] == 'd') {
-									$match = str_replace('{' . $variable[1] . ':d}', '(\d*)', $match);
-								} else {
-									$match = str_replace('{' . $variable[1] . ':' . $variable[2] . '}', '([\w\d%\_\-]*)', $match);
-								}
+								$match = str_replace('{' . $variable[1] . ':' . $variable[2] . '}', '([\w\d%\_\-]*)', $match);
 							}
 						}
-						$routeName = crc32($match);
-						$match = '/^' . $match .'$/iu';
 					}
-					
-					if (empty($currentTree['routes'])) { // First child
-						$currentTree['routes'] = array(
-							$routeName => array()
-						);
-					} else if(empty($currentTree['routes'][$routeName])) {
-						$currentTree['routes'][$routeName] = array();
-					}
-					
-					if (!empty($match)) { // $variables exist in same time with $match
-						$currentTree['routes'][$routeName]['match'] = $match;
-						$match = null;
-					}
-		
-					$currentTree = &$currentTree['routes'][$routeName];
+					$routeName = crc32($match);
+					$match = '/^' . $match .'$/iu';
+				}
+				
+				if (empty($currentTree['routes'])) { // First child
+					$currentTree['routes'] = array(
+						$routeName => array()
+					);
+				} else if(empty($currentTree['routes'][$routeName])) {
+					$currentTree['routes'][$routeName] = array();
+				}
+				
+				if (!empty($match)) { // $variables exist in same time with $match
+					$currentTree['routes'][$routeName]['match'] = $match;
+					$match = null;
+				}
+	
+				$currentTree = &$currentTree['routes'][$routeName];
+				if (!empty($variables)) {
+					$currentTree['vars'] = $variables;
 				}
 			}
 			
@@ -183,10 +204,6 @@ class Router{
 			if (count($controllerDataArray) == 2) {
 				$currentTree['controller'] = $controllerDataArray[0]; 
 				$currentTree['action'] = $controllerDataArray[1];
-			}
-			
-			if (!empty($variables)) {
-				$currentTree['vars'] = $variables;
 			}
 		}
 		

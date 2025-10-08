@@ -1,5 +1,5 @@
 <?php 
-// DWF v0.40 19/03/2015
+// DWF v0.41 08/10/2025 (based on v0.40 19/03/2015)
 
 abstract class SystemFolders {
     const App = '_a';

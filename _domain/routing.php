@@ -8,6 +8,7 @@
 	'/core/wa/widget.css' => 'WidgetAssistent::style',
 	'/core/wa/widget.js' => 'WidgetAssistent::script',
 	'/widgets' => 'Index::a_widgets',
+	'{lang}/profile/{gid:d}/{uid:d}' => 'Profile::a_index',
 
 
 	'api/0.1/login' => 'Auth::a_login',
