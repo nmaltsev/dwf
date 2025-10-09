@@ -1,7 +1,7 @@
 <?php
 namespace Core;
 require_once 'log.class.php';
-$log = Utils\Log::create('Core:');
+$log = Utils\Log::create('Core');
 
 function __autoload($filename) {
 	if (file_exists($filename) == false){
@@ -74,18 +74,19 @@ class App {
 				$action_result = $objectOfController->$actionName(
 					isset($controllerArray['vars']) ? $controllerArray['vars'] : array()
 				);
-				if ($action_result instanceof Generator) {
-					next($action_result); // now it runs the response logic
+				if ($action_result instanceof \Generator) {
+					$action_result->next();
+					$action_result->next();
 					exit;
 				}
-				if ($actionResult instanceof IActionResult) {
+				if ($action_result instanceof IActionResult) {
 					// Execution an action
-					$actionResult->execute();
+					$action_result->execute();
 					exit;
 				} 
-				if (is_array($actionResult)) {
+				if (is_array($action_result)) {
 					header('Content-Type: application/json');
-					echo json_encode($actionResult);
+					echo json_encode($action_result);
 					exit;
 				} 
 					
@@ -243,16 +244,18 @@ class EmptyAction implements IActionResult{
 }
 
 function response($payload = null, int $code = 200) {
-    yield; // makes it a generator
+    yield;
+
     http_response_code($code);
-    if ($payload !== null) {
-        if (is_array($payload) || is_object($payload)) {
-            header('Content-Type: application/json');
-            echo json_encode($payload);
-        } else {
-            echo $payload;
-        }
+
+    if ($payload === null) return;
+
+    if (is_array($payload) || is_object($payload)) {
+        header('Content-Type: application/json');
+        echo json_encode($payload, JSON_UNESCAPED_UNICODE);
+    } else {
+        header('Content-Type: text/plain; charset=utf-8');
+        echo $payload;
     }
 }
 
-?>

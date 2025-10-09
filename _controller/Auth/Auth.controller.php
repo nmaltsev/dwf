@@ -6,7 +6,7 @@ class Auth extends \Core\AController {
 	// TODO add a decorator to strict the request method and xhr
 	function a_login(){
 		// POST {user: ..., password: ...}
-		return new \Core\response('Forbidden', 403);
+		return \Core\response('Forbidden', 403);
 	}
 	function a_logout(){
 		return ['success' => True];

@@ -41,7 +41,8 @@ class Log
     /**
      * Pretty print arrays/objects to stdout
      */
-    public function debug(mixed $data): void
+    // public function debug(mixed $data): void // since PHP 8.x 
+	public function debug($data): void
     {
         $formatted = print_r($data, true);
         $this->writeToStream(STDOUT, "DEBUG", $formatted);

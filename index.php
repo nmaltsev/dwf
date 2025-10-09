@@ -1,5 +1,5 @@
 <?php 
-// DWF v0.41 08/10/2025 (based on v0.40 19/03/2015)
+// DWF v0.42 09/10/2025 (based on v0.40 19/03/2015)
 
 abstract class SystemFolders {
     const App = '_a';
@@ -7,8 +7,6 @@ abstract class SystemFolders {
     const Controller = '_controller';
     const Domain = '_domain';
     const AppCore = 'core';
-    // TODO
-    const StaticLog = 'log';
 }
 
 // Constants:
