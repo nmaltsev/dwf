@@ -1,5 +1,7 @@
 <?php
 namespace Core;
+require_once 'log.class.php';
+$log = Utils\Log::create('Core:');
 
 function __autoload($filename) {
 	if (file_exists($filename) == false){
@@ -14,7 +16,6 @@ abstract class System {
 		'router.class.php',
 		'sourceStore.class.php',
 		'template.class.php',
-		'log.class.php',
 		'widgets.class.php'
 	];
 
@@ -24,9 +25,9 @@ abstract class System {
 		}
 		$appConfig = Utils\SourceStore::restore(DOMAIN_PATH.'config.php');
 		
-		if (isset($appConfig['default_log_file'])) {
-			Utils\Log::$defaultLogFilePath = $appConfig['default_log_file'];
-		}
+		// if (isset($appConfig['default_log_file'])) {
+		// 	Utils\Log::$defaultLogFilePath = $appConfig['default_log_file'];
+		// }
 		
 		return $appConfig;
 	}
@@ -56,6 +57,7 @@ class App {
 	
 	// @memberOf App - controller method execution
 	public function execute(){
+		global $log; 
 		$controllerArray = $this->rout_data;
 		$controllerClassName = $controllerArray['controller'];
 		$classPath = CONTROLLER_PATH . $controllerClassName . DS . $controllerClassName . '.controller.php';
@@ -69,31 +71,39 @@ class App {
 			// and will return true in PHP 5.3
 			// is_callable($checkClassName), is_callable(array($controllerClassName,$actionName))
 			if (method_exists($objectOfController, $actionName)) {
-				$actionResult = $objectOfController->$actionName(
+				$action_result = $objectOfController->$actionName(
 					isset($controllerArray['vars']) ? $controllerArray['vars'] : array()
 				);
-				
+				if ($action_result instanceof Generator) {
+					next($action_result); // now it runs the response logic
+					exit;
+				}
 				if ($actionResult instanceof IActionResult) {
 					// Execution an action
-					$actionResult->execute();	
-				} else {
-					// $controllerArray["values"] will store the controller properties
-					Utils\Log::write(
-						'Trouble: ' . date('Y/m/d H:i:s') . 
-						' controller-name: ' . $controllerArray['controller'] . 
-						' action-name: ' . $controllerArray['action']
-					);
-					Utils\Log::write('Trouble action does not implements IAction result');
-				}
+					$actionResult->execute();
+					exit;
+				} 
+				if (is_array($actionResult)) {
+					header('Content-Type: application/json');
+					echo json_encode($actionResult);
+					exit;
+				} 
+					
+				$log->error(
+					'Trouble: ' . date('Y/m/d H:i:s') . 
+					' controller-name: ' . $controllerArray['controller'] . 
+					' action-name: ' . $controllerArray['action']
+				);
+				$log->error('Trouble action does not implements IAction result');
 			} else {
-				Utils\Log::write('Action not found: ' . $controllerClassName . '::' . $actionName);
-				throw new \Exception('action not exist');
+				$log->error('Action not found: ' . $controllerClassName . '::' . $actionName);
 			}
+			throw new \Exception('The action could not be processed');
 		} else {
 			$errMessage = 'File "' . $classPath . 
 			'" not found or class "' . $controllerArray['controller'] . 
 			'" does not exist';
-			Utils\Log::write($errMessage);
+			$log->error($errMessage);
 			throw new \Exception($errMessage);
 		}
 	}
@@ -230,6 +240,19 @@ class ExtendFormatAction extends AAction implements IActionResult{
 
 class EmptyAction implements IActionResult{
 	function execute(){}
+}
+
+function response($payload = null, int $code = 200) {
+    yield; // makes it a generator
+    http_response_code($code);
+    if ($payload !== null) {
+        if (is_array($payload) || is_object($payload)) {
+            header('Content-Type: application/json');
+            echo json_encode($payload);
+        } else {
+            echo $payload;
+        }
+    }
 }
 
 ?>

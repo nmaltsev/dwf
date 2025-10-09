@@ -1,4 +1,6 @@
 <?php
+$log = \Core\Utils\Log::create();
+
 class Index extends \Core\AController{
 
 	function __construct(){}
@@ -9,13 +11,13 @@ class Index extends \Core\AController{
 		
 		$view->setOptionsArray(array(
 			'time' => date('Y/m/d H:i:s')
-	   ));
+	   	));
 
-	   return $view;
+	   	return $view;
 	}
 
 	function a_widgets($conf) {
-		\Core\Utils\Log::logger()->send('test123');
+		$log->info('test123');
 		// Demo page with widgets
 		return $this->view('widgets');
 	}

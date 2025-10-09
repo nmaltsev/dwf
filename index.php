@@ -7,6 +7,7 @@ abstract class SystemFolders {
     const Controller = '_controller';
     const Domain = '_domain';
     const AppCore = 'core';
+    // TODO
     const StaticLog = 'log';
 }
 
@@ -17,7 +18,6 @@ define('APP_PATH', FRAMEWORK_ROOT . SystemFolders::App . DS . SystemFolders::App
 define('STATIC_PATH', FRAMEWORK_ROOT . SystemFolders::Static . DS);
 define('CONTROLLER_PATH', FRAMEWORK_ROOT . SystemFolders::Controller . DS);
 define('DOMAIN_PATH', FRAMEWORK_ROOT . SystemFolders::Domain . DS);
-define('LOG_PATH', STATIC_PATH . SystemFolders::StaticLog . DS);
 
 include(APP_PATH . 'core.php');
 
