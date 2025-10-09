@@ -259,3 +259,25 @@ function response($payload = null, int $code = 200) {
     }
 }
 
+function strict_method(string $allowedMethod) {
+    $currentMethod = $_SERVER['REQUEST_METHOD'] ?? '';
+
+    if (strtoupper($currentMethod) !== strtoupper($allowedMethod)) {
+        header('Content-Type: text/plain; charset=utf-8');
+        http_response_code(405);
+        echo "Method Not Allowed: only {$allowedMethod} requests are permitted.";
+        die();
+    }
+}
+
+function strict_xhr() {
+    $isXHR = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+             strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+
+    if (!$isXHR) {
+        header('Content-Type: text/plain; charset=utf-8');
+        http_response_code(403);
+        echo "Forbidden: this endpoint accepts only AJAX (XHR) requests.";
+        die();
+    }
+}

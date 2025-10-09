@@ -3,8 +3,8 @@ class Auth extends \Core\AController {
 	
 	function __construct(){}
 	
-	// TODO add a decorator to strict the request method and xhr
 	function a_login(){
+		\Core\strict_method('post');
 		// POST {user: ..., password: ...}
 		return \Core\response('Forbidden', 403);
 	}
